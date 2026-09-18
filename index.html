@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>籌碼計算器</title>
 <style>
 :root{
@@ -223,7 +228,17 @@ input[type="number"]:focus{
   cursor:pointer;
 }
 .reset:hover{border-color:var(--ink-soft);color:var(--ink);}
+@media (max-width: 420px){
+  h1{font-size:28px;}
+  .denom-row{grid-template-columns:auto 1fr auto;grid-template-areas:"chip label label" "chip input subtotal";row-gap:4px;}
+  .denom-row .chip{grid-area:chip;}
+  .denom-row .denom-label{grid-area:label;}
+  .denom-row input{grid-area:input;width:100%;}
+  .denom-row .subtotal{grid-area:subtotal;width:auto;}
+}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <h1>籌碼計算器</h1>
@@ -434,3 +449,5 @@ input[type="number"]:focus{
   recalc();
 })();
 </script>
+</body>
+</html>
