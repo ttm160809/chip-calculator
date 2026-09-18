@@ -182,11 +182,15 @@ input[type="number"]:focus{
   border-radius:14px;
   padding:1.4rem 1.4rem;
   display:flex;
-  flex-wrap:wrap;
-  gap:1.25rem 2rem;
-  justify-content:space-between;
+  flex-direction:column;
+  gap:1.1rem;
 }
-.result-block{flex:1 1 200px;}
+.result-pair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.25rem;
+}
+.result-block{min-width:0;}
 .result-label{
   font-size:12px;
   font-weight:700;
@@ -228,6 +232,11 @@ input[type="number"]:focus{
   cursor:pointer;
 }
 .reset:hover{border-color:var(--ink-soft);color:var(--ink);}
+.result-divider{
+  border:none;
+  border-top:1px solid color-mix(in srgb, var(--felt-ink) 18%, transparent);
+  margin:0;
+}
 @media (max-width: 420px){
   h1{font-size:28px;}
   .denom-row{grid-template-columns:auto 1fr auto;grid-template-areas:"chip label label" "chip input subtotal";row-gap:4px;}
@@ -235,6 +244,7 @@ input[type="number"]:focus{
   .denom-row .denom-label{grid-area:label;}
   .denom-row input{grid-area:input;width:100%;}
   .denom-row .subtotal{grid-area:subtotal;width:auto;}
+  .result-value{font-size:24px;}
 }
 </style>
 </head>
@@ -266,14 +276,17 @@ input[type="number"]:focus{
       <p class="result-label">目前籌碼量</p>
       <p class="result-value" id="totalValue">0</p>
     </div>
-    <div class="result-block">
-      <p class="result-label">水上 / 水下</p>
-      <p class="result-value" id="diffValue">0</p>
-      <span class="badge even" id="diffBadge">打平</span>
-    </div>
-    <div class="result-block">
-      <p class="result-label">換算金額</p>
-      <p class="result-value" id="amountValue">0</p>
+    <hr class="result-divider">
+    <div class="result-pair">
+      <div class="result-block">
+        <p class="result-label">水上 / 水下</p>
+        <p class="result-value" id="diffValue">0</p>
+        <span class="badge even" id="diffBadge">打平</span>
+      </div>
+      <div class="result-block">
+        <p class="result-label">換算金額</p>
+        <p class="result-value" id="amountValue">0</p>
+      </div>
     </div>
   </div>
 
