@@ -443,7 +443,10 @@ input[type="number"]:focus{
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       var state = JSON.parse(raw);
-      if (state.start !== undefined) startInput.value = state.start;
+      var savedStart = parseFloat(state.start);
+      if (state.start !== undefined && !isNaN(savedStart) && savedStart > 0){
+        startInput.value = state.start;
+      }
       if (state.addBuy !== undefined) addBuyInput.value = state.addBuy;
       if (state.lendOut !== undefined) lendOutInput.value = state.lendOut;
       DENOMS.forEach(function(d){
