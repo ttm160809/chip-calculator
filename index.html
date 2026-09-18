@@ -252,7 +252,7 @@ input[type="number"]:focus{
 
 <div class="wrap">
   <h1>籌碼計算器</h1>
-  <p class="sub">輸入起始籌碼量、加買籌碼量與各面值數量，自動計算目前籌碼量與水上水下。</p>
+  <p class="sub">輸入起始籌碼量、加買籌碼量、各面值數量與借出籌碼量，自動計算目前籌碼量與水上水下。</p>
 
   <div class="card">
     <h2>基本籌碼</h2>
@@ -269,6 +269,14 @@ input[type="number"]:focus{
   <div class="card">
     <h2>各面值籌碼數量</h2>
     <div class="denom-grid" id="denomGrid"></div>
+  </div>
+
+  <div class="card">
+    <h2>借出籌碼</h2>
+    <div class="start-row">
+      <label for="lendOut">借出籌碼量</label>
+      <input type="number" id="lendOut" inputmode="numeric" min="0" step="1" placeholder="0" value="0">
+    </div>
   </div>
 
   <div class="result">
@@ -347,6 +355,7 @@ input[type="number"]:focus{
 
   var startInput = document.getElementById("start");
   var addBuyInput = document.getElementById("addBuy");
+  var lendOutInput = document.getElementById("lendOut");
   var totalValueEl = document.getElementById("totalValue");
   var diffValueEl = document.getElementById("diffValue");
   var diffBadgeEl = document.getElementById("diffBadge");
@@ -378,6 +387,10 @@ input[type="number"]:focus{
       total += subtotal;
       document.getElementById("sub-" + d.v).textContent = "= " + fmt(subtotal);
     });
+
+    var lendOut = parseFloat(lendOutInput.value);
+    if (isNaN(lendOut) || lendOut < 0) lendOut = 0;
+    total += lendOut;
 
     var start = parseFloat(startInput.value);
     if (isNaN(start) || start < 0) start = 0;
@@ -417,7 +430,7 @@ input[type="number"]:focus{
 
   function save(){
     try{
-      var state = {start: startInput.value, addBuy: addBuyInput.value};
+      var state = {start: startInput.value, addBuy: addBuyInput.value, lendOut: lendOutInput.value};
       DENOMS.forEach(function(d){
         state["qty-" + d.v] = document.getElementById("qty-" + d.v).value;
       });
@@ -432,6 +445,7 @@ input[type="number"]:focus{
       var state = JSON.parse(raw);
       if (state.start !== undefined) startInput.value = state.start;
       if (state.addBuy !== undefined) addBuyInput.value = state.addBuy;
+      if (state.lendOut !== undefined) lendOutInput.value = state.lendOut;
       DENOMS.forEach(function(d){
         var key = "qty-" + d.v;
         if (state[key] !== undefined){
@@ -445,6 +459,7 @@ input[type="number"]:focus{
 
   startInput.addEventListener("input", recalc);
   addBuyInput.addEventListener("input", recalc);
+  lendOutInput.addEventListener("input", recalc);
   DENOMS.forEach(function(d){
     document.getElementById("qty-" + d.v).addEventListener("input", recalc);
   });
@@ -452,6 +467,7 @@ input[type="number"]:focus{
   resetBtn.addEventListener("click", function(){
     startInput.value = "";
     addBuyInput.value = "0";
+    lendOutInput.value = "0";
     DENOMS.forEach(function(d){
       document.getElementById("qty-" + d.v).value = "";
     });
