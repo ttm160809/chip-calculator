@@ -275,7 +275,7 @@ input[type="number"]:focus{
     <h2>借出籌碼</h2>
     <div class="start-row">
       <label for="lendOut">借出籌碼量</label>
-      <input type="number" id="lendOut" inputmode="numeric" min="0" step="1" placeholder="0" value="0">
+      <input type="number" id="lendOut" inputmode="numeric" min="0" step="1" placeholder="0">
     </div>
   </div>
 
@@ -470,7 +470,7 @@ input[type="number"]:focus{
   resetBtn.addEventListener("click", function(){
     startInput.value = "5000";
     addBuyInput.value = "0";
-    lendOutInput.value = "0";
+    lendOutInput.value = "";
     DENOMS.forEach(function(d){
       document.getElementById("qty-" + d.v).value = "";
     });
