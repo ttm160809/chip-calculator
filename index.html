@@ -258,7 +258,7 @@ input[type="number"]:focus{
     <h2>基本籌碼</h2>
     <div class="start-row">
       <label for="start">起始籌碼量</label>
-      <input type="number" id="start" inputmode="numeric" min="0" step="1" placeholder="0" value="10000">
+      <input type="number" id="start" inputmode="numeric" min="0" step="1" placeholder="0" value="5000">
     </div>
     <div class="start-row">
       <label for="addBuy">加買籌碼量</label>
@@ -465,7 +465,7 @@ input[type="number"]:focus{
   });
 
   resetBtn.addEventListener("click", function(){
-    startInput.value = "";
+    startInput.value = "5000";
     addBuyInput.value = "0";
     lendOutInput.value = "0";
     DENOMS.forEach(function(d){
