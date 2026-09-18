@@ -218,6 +218,26 @@ input[type="number"]:focus{
 .badge.up{background:var(--up-bg);color:var(--up);}
 .badge.down{background:var(--down-bg);color:var(--down);}
 .badge.even{background:var(--gold-bg);color:var(--gold);}
+.copy-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:6px;
+  background:none;
+  border:1px solid color-mix(in srgb, var(--felt-ink) 35%, transparent);
+  color:var(--felt-ink);
+  font-family:inherit;
+  font-size:12px;
+  font-weight:600;
+  padding:3px 10px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.copy-btn:hover{border-color:var(--felt-ink);}
+.copy-btn.copied{
+  border-color:var(--felt-ink);
+  background:color-mix(in srgb, var(--felt-ink) 16%, transparent);
+}
 .reset{
   display:block;
   margin:1rem auto 0;
@@ -294,6 +314,7 @@ input[type="number"]:focus{
       <div class="result-block">
         <p class="result-label">換算金額</p>
         <p class="result-value" id="amountValue">0</p>
+        <button class="copy-btn" id="copyAmountBtn" type="button">複製數值</button>
       </div>
     </div>
   </div>
@@ -360,7 +381,9 @@ input[type="number"]:focus{
   var diffValueEl = document.getElementById("diffValue");
   var diffBadgeEl = document.getElementById("diffBadge");
   var amountValueEl = document.getElementById("amountValue");
+  var copyAmountBtn = document.getElementById("copyAmountBtn");
   var resetBtn = document.getElementById("resetBtn");
+  var copyResetTimer = null;
 
   var STORAGE_KEY = "chip-calc-state-v1";
 
@@ -457,6 +480,45 @@ input[type="number"]:focus{
       });
     }catch(e){}
   }
+
+  function copyAmount(){
+    var text = amountValueEl.textContent;
+
+    function showCopied(){
+      copyAmountBtn.textContent = "已複製";
+      copyAmountBtn.classList.add("copied");
+      clearTimeout(copyResetTimer);
+      copyResetTimer = setTimeout(function(){
+        copyAmountBtn.textContent = "複製數值";
+        copyAmountBtn.classList.remove("copied");
+      }, 1500);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(showCopied).catch(function(){
+        fallbackCopy(text, showCopied);
+      });
+    } else {
+      fallbackCopy(text, showCopied);
+    }
+  }
+
+  function fallbackCopy(text, onDone){
+    try{
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      onDone();
+    }catch(e){}
+  }
+
+  copyAmountBtn.addEventListener("click", copyAmount);
 
   load();
 
