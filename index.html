@@ -481,11 +481,17 @@ input[type="number"]:focus{
     }
 
     var denomVal = parseFloat(denomInput.value);
-    if (isNaN(denomVal) || denomVal <= 0){
+    if (isNaN(denomVal)){
       amountValueEl.textContent = "-";
     } else {
-      var amount = total / denomVal;
-      amountValueEl.textContent = fmtAmount(amount);
+      var amount = diff * denomVal;
+      if (amount > 0){
+        amountValueEl.textContent = "+" + fmtAmount(amount);
+      } else if (amount < 0){
+        amountValueEl.textContent = "-" + fmtAmount(Math.abs(amount));
+      } else {
+        amountValueEl.textContent = "0";
+      }
     }
 
     save();
