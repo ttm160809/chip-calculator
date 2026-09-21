@@ -185,12 +185,46 @@ input[type="number"]:focus{
   flex-direction:column;
   gap:1.1rem;
 }
+.result-top{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1rem;
+}
+.result-top .result-block:first-child{
+  flex:1 1 auto;
+  min-width:110px;
+}
 .result-pair{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:1.25rem;
 }
 .result-block{min-width:0;}
+.result-denom{flex:0 0 auto;text-align:right;}
+.result-denom .denom-input{
+  width:76px;
+  text-align:center;
+  font-family:inherit;
+  font-variant-numeric:tabular-nums;
+  font-size:17px;
+  font-weight:700;
+  color:var(--felt-ink);
+  background:color-mix(in srgb, var(--felt-ink) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--felt-ink) 35%, transparent);
+  border-radius:8px;
+  padding:6px 8px;
+  -moz-appearance:textfield;
+}
+.result-denom .denom-input::-webkit-outer-spin-button,
+.result-denom .denom-input::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.result-denom .denom-input:focus{
+  outline:none;
+  border-color:var(--felt-ink);
+}
 .result-label{
   font-size:12px;
   font-weight:700;
@@ -300,9 +334,15 @@ input[type="number"]:focus{
   </div>
 
   <div class="result">
-    <div class="result-block">
-      <p class="result-label">目前籌碼量</p>
-      <p class="result-value" id="totalValue">0</p>
+    <div class="result-top">
+      <div class="result-block">
+        <p class="result-label">目前籌碼量</p>
+        <p class="result-value" id="totalValue">0</p>
+      </div>
+      <div class="result-block result-denom">
+        <label class="result-label" for="denom">DENOM</label>
+        <input type="number" id="denom" class="denom-input" inputmode="decimal" min="0" step="0.1" value="0.1">
+      </div>
     </div>
     <hr class="result-divider">
     <div class="result-pair">
@@ -381,6 +421,7 @@ input[type="number"]:focus{
   var diffValueEl = document.getElementById("diffValue");
   var diffBadgeEl = document.getElementById("diffBadge");
   var amountValueEl = document.getElementById("amountValue");
+  var denomInput = document.getElementById("denom");
   var copyAmountBtn = document.getElementById("copyAmountBtn");
   var resetBtn = document.getElementById("resetBtn");
   var copyResetTimer = null;
@@ -439,13 +480,12 @@ input[type="number"]:focus{
       diffBadgeEl.className = "badge even";
     }
 
-    var amount = diff / 10;
-    if (amount > 0){
-      amountValueEl.textContent = "+" + fmtAmount(amount);
-    } else if (amount < 0){
-      amountValueEl.textContent = "-" + fmtAmount(Math.abs(amount));
+    var denomVal = parseFloat(denomInput.value);
+    if (isNaN(denomVal) || denomVal <= 0){
+      amountValueEl.textContent = "-";
     } else {
-      amountValueEl.textContent = "0";
+      var amount = total / denomVal;
+      amountValueEl.textContent = fmtAmount(amount);
     }
 
     save();
@@ -453,7 +493,7 @@ input[type="number"]:focus{
 
   function save(){
     try{
-      var state = {start: startInput.value, addBuy: addBuyInput.value, lendOut: lendOutInput.value};
+      var state = {start: startInput.value, addBuy: addBuyInput.value, lendOut: lendOutInput.value, denom: denomInput.value};
       DENOMS.forEach(function(d){
         state["qty-" + d.v] = document.getElementById("qty-" + d.v).value;
       });
@@ -472,6 +512,10 @@ input[type="number"]:focus{
       }
       if (state.addBuy !== undefined) addBuyInput.value = state.addBuy;
       if (state.lendOut !== undefined) lendOutInput.value = state.lendOut;
+      var savedDenom = parseFloat(state.denom);
+      if (state.denom !== undefined && !isNaN(savedDenom) && savedDenom > 0){
+        denomInput.value = state.denom;
+      }
       DENOMS.forEach(function(d){
         var key = "qty-" + d.v;
         if (state[key] !== undefined){
@@ -525,6 +569,7 @@ input[type="number"]:focus{
   startInput.addEventListener("input", recalc);
   addBuyInput.addEventListener("input", recalc);
   lendOutInput.addEventListener("input", recalc);
+  denomInput.addEventListener("input", recalc);
   DENOMS.forEach(function(d){
     document.getElementById("qty-" + d.v).addEventListener("input", recalc);
   });
@@ -533,6 +578,7 @@ input[type="number"]:focus{
     startInput.value = "5000";
     addBuyInput.value = "0";
     lendOutInput.value = "";
+    denomInput.value = "0.1";
     DENOMS.forEach(function(d){
       document.getElementById("qty-" + d.v).value = "";
     });
